@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { IProduct } from './product';
+import { ProductService } from './product.service';
 
 @Component({
     selector: 'pm-products',
@@ -24,36 +25,15 @@ export class ProductListComponent implements OnInit {
         this.filteredProducts = this.listFilter?this.performFilter(this.listFilter):this.products;
     }
     filteredProducts: IProduct[];
-    products: IProduct[] = [
-        {
-            "productId": 2,
-            "productName": "Garden Cart",
-            "productCode": "GDN-0023",
-            "releaseDate": "March 18, 2019",
-            "description": "fancy description heare",
-            "price": 32.99,
-            "starRating": 4.2,
-            "imageUrl": "https://cdn11.bigcommerce.com/s-9p889rxpkb/product_images/uploaded_images/vc-launch-hp-banner.jpg"
-        },
-        {
-            "productId": 3,
-            "productName": "Hammer",
-            "productCode": "TBX-0023",
-            "releaseDate": "March 22, 2019",
-            "description": "fancy description heare",
-            "price": 8.99,
-            "starRating": 4.6,
-            "imageUrl": "https://cdn11.bigcommerce.com/s-9p889rxpkb/product_images/uploaded_images/vc-launch-hp-banner.jpg"
-        }
-    ];
+    products: IProduct[] = [];
 
-    constructor() {
-        this.filteredProducts = this.products;
-        this.listFilter = 'cart';
+
+    constructor(private productService: ProductService) {
     }
 
     ngOnInit() {
-        console.log('In OnInit!');
+        this.products = this.productService.getProducts();
+        this.filteredProducts = this.products;
     }
 
     toggleImage(): void
