@@ -1,35 +1,41 @@
 import { Injectable } from '@angular/core';
 import { IProduct } from './product';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+// import { $ } from 'protractor';
 
 @Injectable({
     providedIn:'root'
 })
 export class ProductService{
 
-    getProducts(): IProduct[]
+    private productUrl = 'api/products/products.json'
+
+    constructor(private http: HttpClient)
     {
-        return [
-            {
-                "productId": 2,
-                "productName": "Garden Cart",
-                "productCode": "GDN-0023",
-                "releaseDate": "March 18, 2019",
-                "description": "fancy description heare",
-                "price": 32.99,
-                "starRating": 4.2,
-                "imageUrl": "https://cdn11.bigcommerce.com/s-9p889rxpkb/product_images/uploaded_images/vc-launch-hp-banner.jpg"
-            },
-            {
-                "productId": 3,
-                "productName": "Hammer",
-                "productCode": "TBX-0023",
-                "releaseDate": "March 22, 2019",
-                "description": "fancy description heare",
-                "price": 8.99,
-                "starRating": 4.6,
-                "imageUrl": "https://cdn11.bigcommerce.com/s-9p889rxpkb/product_images/uploaded_images/vc-launch-hp-banner.jpg"
-            }
-        ];
+
+    }
+
+    getProducts(): Observable<IProduct[]>
+    {
+        return this.http.get<IProduct[]>(this.productUrl).pipe(
+            tap(data => console.log('All:' + JSON.stringify(data))),
+            catchError(this.handleError)
+        );
+    }
+
+    private handleError(err: HttpErrorResponse)
+    {
+        let errorMessage = '';
+        if(err.error instanceof ErrorEvent)
+        {
+            errorMessage = 'An error occured: $(err.error.message} ' ;
+        }else{
+            errorMessage = 'Server returned code: ${err.status}, error message is: ${err.message}';
+        }
+        console.error(errorMessage);
+        return throwError(errorMessage);
     }
 
 }
